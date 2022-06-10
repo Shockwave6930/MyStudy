@@ -1,0 +1,9 @@
+Tiago Tutorial
+
+マニュアル(/shared/tiago/Handbook/TIAGO_lang_en_GB_handbook-1.29.0-ferrum.pdf)261ページにTiago TUtorialの情報が書いている。
+
+チュートリアル(ROS公式:http://wiki.ros.org/Robots/TIAGo/Tutorials)。
+チュートリアルのコードはGitHub(https://github.com/pal-robotics/tiago_tutorials)においてある。
+
+Tiagoには制御PCが必要だが、これは318の方に既にある。だからやることとしては、研究室PCにUbuntuぶち込んで、そこでシミュレーション(コーディング)やって、出来たら制御PCのWorkSpaceにぶち込んでやればOK。
+
