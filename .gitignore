@@ -1,3 +1,8 @@
-*jupyterlab-workspace
-*DS_Store
-*code-workspace
+*.jupyterlab-workspace
+*.DS_Store
+*.code-workspace
+*.vscode
+*.ipynb_checkpoints
+/a.out.DSYM/
+a.out
+test.cpp
