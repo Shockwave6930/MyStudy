@@ -216,3 +216,62 @@ int round_off_the_number_to_the_nearest_pow_10_N1(int x, int N){
     int ans = int((x + 5 * pow(10, N)) / pow(10, N+1)) * pow(10, N+1);
     return ans;
 }
+
+//ペア和の最適化問題に対する二分探索法
+//ペア和の最適化問題:
+//  N個の整数a0, a1, ..., aNと、N個の整数b0, b1, ..., bNが与えられたとき、二組の整数列からそれぞれ一つずつ選んで和をとる
+//  この時その和として考えられる値のうち、整数K以上の範囲内での最小値を求める問題
+//  ただし、a[i]+b[j] >= Kを満たすような整数i, jの組が少なくとも一つは存在するとする
+//そのまま使用可能
+//O(Nlog2N)
+const int INF = 20000000;
+int main5(){
+    int N, K;
+    cin >> N >> K;
+    vector<int> a(N), b(N);
+    for(int i = 0; i < N; i++) cin >> a[i];
+    for(int i = 0; i < N; i++) cin >> b[i];
+    int min_value = INF;
+    sort(b.begin(), b.end());
+    b.push_back(INF);   //b.end()はbの要素の次のアドレスを指すイテレータであり、これにアクセスすると未定義の動作を引き起こすため追加する
+    for(int i = 0; i < N; i++){   //a[i]を選ぶ
+        auto iter = lower_bound(b.begin(), b.end(), K - a[i]);   //a[i]を選んだ時にK-a[i]以上の最小のbのイテレータを求める
+        int value = *iter;   //イテレータの指す値へのアクセス
+        if(a[i] + value < min_value) min_value = a[i] + value;   //最小でなかった場合だけでなく、そもそもK-a[i]以上の値が存在しないときもここで破棄される
+    }
+    cout << min_value << endl;
+}
+
+//N個の値の最大値を最小にするという最適化問題に対する二分探索法
+//N個の値の最大値を最小にするという最適化問題:
+//  N個の風船があり、それぞれ初期状態ではh[i]の高さにあり、一秒ごとにs[i]だけ上昇する。
+//  このような風船を射撃によって割る
+//  0秒後に1個風船を割ることができ、そこから一秒ごとに一個の風船を割ることができ、最終的に全ての風船を割る
+//  順番は自由に選ぶことが可能
+//  風船を割るのに必要なペナルティ(値)はその時の風船の高度として、N個の風船を割り終わった時のコストとして考えられる最小値を求める問題
+//そのまま使用可能
+//O(N*log2N*log2N) (ただし、M = max(h[0]+N*s[0], h[1]+N*s[i], ..., h[N-1]+N*s[N-1]))
+const long long INF = 1LL << 60;
+int main6(){
+    int N;
+    cin >> N;
+    vector<long long> h(N), s(N);
+    for(int i = 0; i < N; i++) cin >> h[i] >> s[i];
+    long long left = 0, right = INF;   //探索範囲はペナルティ直線上で、全ての風船を割ることが可能な最小のペナルティを求める
+    while(right - left > 1){
+        long long mid = (left + right) / 2;
+        bool frug = true;
+        vector<long long> t(N, 0);   //あと何秒以内に風船を割らなければならないかを保持する配列
+        for(int i = 0; i < N; i++){
+            if(mid < h[i]) frug = false;   //そもそもmidが初期高度より低かったらfalse
+            else t[i] = (mid - h[i]) / s[i];   //これは切り捨てで問題ない。例えば残り時間が2秒の時に、midに到達するのが1.5秒後だろうと1秒後でもt[i](=1, 1.5) < 2が成立するため
+        }
+        sort(t.begin(), t.end());   //時間制限が短い順にソート
+        for(int i = 0; i < N; i++){
+            if(t[i] < i) frug = false;   //制限時間(t[i])が、現在時刻から考えた実現可能な時刻(i)よりも小さければ割れない
+        }
+        if(frug) right = mid;   //ペナルティ直線上ではmidはtrue領域にあるので、midの左側でfalse領域とtrue領域の境界を探す
+        else left = mid;   //ペナルティ直線上ではmidはfalse領域にあるので、midの右側でfalse領域とtrue領域の境界を探す
+    }
+    cout << right << endl;
+}
