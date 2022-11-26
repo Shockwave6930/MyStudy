@@ -275,3 +275,78 @@ int main6(){
     }
     cout << right << endl;
 }
+
+//コイン問題に対する貪欲法
+//コイン問題:
+//  500,100,50,10,5,1円玉がa[0], a[1], ..., a[5]枚ある
+//  これらを用いてX円を支払いたい
+//  この時、支払いに用いるコインの枚数を最小にする問題
+//そのまま使用可能
+//O(1)
+const vector<int> coins = {500, 100, 50, 10, 5, 1};
+int main7(){
+    int X;
+    cin >> X;
+    vector<int> a(6);
+    for(int i = 0; i < 6; i++) cin >> a[i];
+
+    int ans = 0;
+    for(int i = 0; i < 6; i++){
+        int num = X / coins[i];
+        if(num > a[i]) num = a[i];
+        X -= coins[i] * num;
+        ans += num;
+    }
+    cout << ans << endl;
+}
+
+//区間スケジューリング問題に対する貪欲法
+//区間スケジューリング問題:
+//  N個の仕事があり、i番目の仕事は時刻interval[i].firstに開始され、interval[i].secondに終了する
+//  この時、時刻が重ならないように仕事を選ぶとき、選ぶ仕事数の最大値を求める問題
+//そのまま使用可能
+//O(N*log2N)
+using Interval = pair<int, int>;   //エイリアス宣言
+bool compare(const Interval &a, const Interval &b){   //比較関数
+    return a.second < b.second;
+}
+int main8(){
+    int N;
+    cin >> N;
+    vector<Interval> interval(N);
+    for(int i = 0; i < N; i++) cin >> interval[i].first >> interval[i].second;   //firstが区間の開始時間, secondが区間の終了時間
+    sort(interval.begin(), interval.end(), compare);   //区間の終了時刻でソート
+    int count = 0;   //ans
+    int current_end_time = 0;   //現在選択した最新の区間の終了時間
+    for(int i = 0; i < N; i++){
+        if(interval[i].first < current_end_time) continue;   //これまでに選択した区間の終了時間よりも開始時間の早い全ての区間は無視し、終了時間よりも遅くて開始時間が一番早いものを選択している
+        count++;
+        current_end_time = interval[i].second;
+    }
+    cout << count << endl;
+}
+
+//ボタンを押してA[i]をB[i]の倍数にする問題に対する貪欲法
+//ボタンを押してA[i]をB[i]の倍数にする問題:
+//  0以上の整数からなるN項の数列A[0], A[1], ..., A[N-1]とN個のボタンiが与えられる
+//  i番目のボタンを押すと、A[0], A[1], ..., A[i]の値がそれぞれ1ずつ増加する
+//  一方、1以上の整数からなるN項の数列B[0], B[1], ..., B[N-1]が与えられる
+//  ボタンを何回か押して、全てのiに対してA[i]がB[i]の倍数になるようにしたい
+//  この時、ボタンを押す回数の最小値を求める問題
+//  そのまま使用可能
+//O(N)
+int main9(){
+    int N;
+    cin >> N;
+    vector<long long> A(N), B(N);
+    for(int i = 0; i < N; i++) cin >> A[i] >> B[i];
+    long long count = 0;   //ans
+    for(int i = N - 1; i >= 0; i--){   //i=N-1から始める
+        A[i] += count;   //それまでにボタンを押された回数分だけ加算
+        long long remainder = A[i] % B[i];
+        long long D = 0;
+        if(remainder != 0) D = B[i] - remainder;   //最小の回数でA[i]をB[i]の倍数にする
+        count++;
+    } 
+    cout << count << endl; 
+}
