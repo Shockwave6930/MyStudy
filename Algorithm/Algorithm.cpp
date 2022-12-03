@@ -161,6 +161,39 @@ int main3(){
     cout << dp[N][W] << endl;   //求めたいのはこれだけ
 }
 
+//編集距離に対する動的計画法
+//編集距離:
+//  二つの文字列S,Tが与えられる
+//  Sに以下の三通りの操作を繰り返すことでTに変換したい
+//  そのような一連の操作のうち、操作回数の最小値を求める
+//  この最小値をSとTの編集距離と呼ぶ
+//  ・変更:S中の文字を一つ選んで任意の文字に変更する
+//  ・削除:S中の文字を一つ選んで削除する
+//  ・挿入:Sの好きな箇所に好きな文字を一文字挿入する
+//そのまま使用可能
+//O(|S| * |T|)
+template<class T> coid chmin(T& a, T b){
+    if(a > b) a = b;
+}
+const int INF = 1 << 29;
+int main10(){
+    string S, T;
+    cin >> S >> T;
+    vector<vector<int>> dp(S.size()+1, vector<int>(T.size()+1, INF));
+    dp[0][0] = 0;
+    for(int i = 0; i <= S.size(); i++){
+        for(int j = 0; j <= T.size(); j++){
+            if(i > 0 && j > 0){
+                if(S[i-1] == T[j-1]) chmin(dp[i][j], dp[i-1][j-1]);
+                else chmin(dp[i][j], dp[i-1][j-1] + 1);
+            }
+            if(i > 0) chmin(dp[i][j], dp[i-1][j] + 1);
+            if(j > 0) chmin(dp[i][j], dp[i][j-1] + 1);
+        }
+    }
+    cout << dp[S.size()][T.size()] << endl;
+}
+
 //区間分割の仕方を最適化する問題に対する動的計画法
 //区間分割の仕方を最適化する問題:
 // N個の要素が一列に並んでいて、これを幾つかの区間に分割する
