@@ -24,7 +24,7 @@
 import rospy
 from spherical_grasps_server import SphericalGrasps
 from actionlib import SimpleActionClient, SimpleActionServer
-from moveit_commander import PlanningSceneInterface
+from moveit_commander import PlanningSceneInterface, MoveGroupCommander
 from moveit_msgs.msg import Grasp, PickupAction, PickupGoal, PickupResult, MoveItErrorCodes
 from moveit_msgs.msg import PlaceAction, PlaceGoal, PlaceResult, PlaceLocation
 from geometry_msgs.msg import Pose, PoseStamped, PoseArray, Vector3Stamped, Vector3, Quaternion
@@ -235,6 +235,10 @@ class PickAndPlaceServer(object):
 		str(moveit_error_dict[result.error_code.val]))
 
 		return result.error_code.val   #moveitのerror codeを返却
+	
+	def prepare_placing_object(self):
+		rospy.loginfo("")
+		
 
 	def place_object(self, object_pose):
 		rospy.loginfo("Clearing octomap")

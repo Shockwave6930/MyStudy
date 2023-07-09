@@ -44,8 +44,8 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion, qua
 from dynamic_reconfigure.server import Server
 from tiago_pick_demo.cfg import SphericalGraspConfig
 
-def normalize(v):   #正規化関数
-    norm = np.linalg.norm(v)   #ベクトルのノルムを求める
+def normalize(v):
+    norm = np.linalg.norm(v)
     if norm == 0:
         return v
     return v / norm
@@ -90,14 +90,14 @@ def filter_poses(sphere_poses, object_pose,
     for pose in sphere_poses:
         # if pose is further away than object, ditch it
         if filter_behind:
-            if pose.position.x > object_pose.pose.position.x:   #object_poseのx座標よりも遠くにx座標があるposeを捨てる
+            if pose.position.x > object_pose.pose.position.x:
                 continue
         # if pose if under the object, ditch it
         if filter_under:
-            if pose.position.z < object_pose.pose.position.z:   #object_poseのz座標よりも低いz座標のposeを捨てる
+            if pose.position.z < object_pose.pose.position.z:
                 continue
 
-        new_list.append(pose)   #スクリーニングした後のリストを生成
+        new_list.append(pose)
     return new_list
 
 
@@ -376,8 +376,7 @@ class SphericalGrasps(object):
         jtpoint = JointTrajectoryPoint()
         jtpoint.positions = [
             float(pos) for pos in self._gripper_pre_grasp_positions.split()]
-        #Let enough time for the gripper to release the object
-        jtpoint.time_from_start = rospy.Duration(3.5)
+        jtpoint.time_from_start = rospy.Duration(self._time_pre_grasp_posture)
         pre_grasp_posture.points.append(jtpoint)
         # Generate all the orientations every step_degrees_yaw deg
         for yaw_angle in np.arange(0.0, 2.0 * pi, radians(self._step_degrees_yaw)):
