@@ -41,8 +41,8 @@ from visualization_msgs.msg import MarkerArray, Marker
 from tf import transformations
 from tf.transformations import quaternion_from_euler, euler_from_quaternion, quaternion_about_axis, unit_vector, quaternion_multiply
 
-from dynamic_reconfigure.server import Server
-from tiago_pick_demo.cfg import SphericalGraspConfig
+from dynamic_reconfigure.server import Server   #動的にパラメータを変更できるdynamic_reconfigure.serverを使用
+from tiago_pick_demo.cfg import SphericalGraspConfig   #dynamic_reconfigureで使用する各種パラメータの定義を記載したファイルをインポート
 
 def normalize(v):   #正規化関数
     norm = np.linalg.norm(v)   #ベクトルのノルムを求める
@@ -115,7 +115,7 @@ class SphericalGrasps(object):
         # Get server parameters from param server by using dynamic reconfigure
         # This is an advantage as you can test your grasp configuration
         # dynamically
-        self.dyn_rec_srv = Server(SphericalGraspConfig, self.dyn_rec_callback)
+        self.dyn_rec_srv = Server(SphericalGraspConfig, self.dyn_rec_callback)   #ノードの初期化
 
         # Setup Markers for debugging
         self.poses_pub = rospy.Publisher(
@@ -127,15 +127,15 @@ class SphericalGrasps(object):
 
         rospy.loginfo("SphericalGrasps initialized!")
 
-    def dyn_rec_callback(self, config, level):
+    def dyn_rec_callback(self, config, level):   #このコールバック関数はユーザーがdyn_rec_srvの変数の変更を適用する関数
 
         rospy.loginfo("Received reconf call: " + str(config))
-        self._grasp_postures_frame_id = config["grasp_postures_frame_id"]
+        self._grasp_postures_frame_id = config["grasp_postures_frame_id"]   #`config["<cfgファイルで定義した変数名>"]`でその値を取得できる
         self._gripper_joint_names = config["gripper_joint_names"]
         self._gripper_pre_grasp_positions = config[
             "gripper_pre_grasp_positions"]
         self._gripper_grasp_positions = config["gripper_grasp_positions"]
-        self._time_pre_grasp_posture = config["time_pre_grasp_posture"]
+        self._time_pre_grasp_posture = config["time_pre_grasp_posture"]   #Graspに入る前のエンドエフェクタグループのジョイントの軌道位置を定義
         self._time_grasp_posture = config["time_grasp_posture"]
         self._time_grasp_posture_final = config["time_grasp_posture_final"]
         self._grasp_pose_frame_id = config["grasp_pose_frame_id"]
@@ -179,7 +179,7 @@ class SphericalGrasps(object):
         ori_y = 0.0
         ori_z = 0.0
         sphere_poses = []
-        rotated_q = quaternion_from_euler(0.0, 0.0, math.radians(180))
+        rotated_q = quaternion_from_euler(0.0, 0.0, math.radians(180))   #eulerで指定されたパラメータを四元数変換
 
         yaw_qtty = int((self._max_degrees_yaw - self._min_degrees_yaw) / self._step_degrees_yaw)  # NOQA
         pitch_qtty = int((self._max_degrees_pitch - self._min_degrees_pitch) / self._step_degrees_pitch)  # NOQA
@@ -221,7 +221,7 @@ class SphericalGrasps(object):
                 # this rotation can be tuned with the dynamic params
                 # multiplying later on
                 roll, pitch, yaw = euler_from_quaternion(q)
-                q = quaternion_from_euler(math.radians(0.0), pitch, yaw)
+                q = quaternion_from_euler(math.radians(0.0), pitch, yaw)   #eulerで指定されたパラメータを四元数変換
 
                 x += object_pose.pose.position.x
                 y += object_pose.pose.position.y
@@ -282,7 +282,7 @@ class SphericalGrasps(object):
             name for the grasp
         :rtype: Grasp
         """
-        g = Grasp()
+        g = Grasp()   #これがmoveitでpickをする際に使用されるゴールのメッセージクラス#######################################################################################################################
         g.id = grasp_id
 
         pre_grasp_posture = JointTrajectory()
@@ -291,16 +291,16 @@ class SphericalGrasps(object):
             name for name in self._gripper_joint_names.split()]
         jtpoint = JointTrajectoryPoint()
         jtpoint.positions = [
-            float(pos) for pos in self._gripper_pre_grasp_positions.split()]
+            float(pos) for pos in self._gripper_pre_grasp_positions.split()]   #Graspの前にgripperをどれくらい開くかのパラメータをロード
         jtpoint.time_from_start = rospy.Duration(self._time_pre_grasp_posture)
         pre_grasp_posture.points.append(jtpoint)
 
-        grasp_posture = copy.deepcopy(pre_grasp_posture)
+        grasp_posture = copy.deepcopy(pre_grasp_posture)   #objectのGraspを行う際ののエンドエフェクタグループのジョイントの軌道位置
         grasp_posture.points[0].time_from_start = rospy.Duration(
             self._time_pre_grasp_posture + self._time_grasp_posture)
         jtpoint2 = JointTrajectoryPoint()
         jtpoint2.positions = [
-            float(pos) for pos in self._gripper_grasp_positions.split()]
+            float(pos) for pos in self._gripper_grasp_positions.split()]   #Graspの際にgripperをどれくらい狭めるかのパラメータをロード
         jtpoint2.time_from_start = rospy.Duration(
             self._time_pre_grasp_posture +
             self._time_grasp_posture + self._time_grasp_posture_final)
@@ -309,7 +309,7 @@ class SphericalGrasps(object):
         g.pre_grasp_posture = pre_grasp_posture
         g.grasp_posture = grasp_posture
 
-        header = Header()
+        header = Header()   #Graspクラスのgrasp_pose.header用のheaderを作成
         header.frame_id = self._grasp_pose_frame_id  # base_footprint
         q = [pose.orientation.x, pose.orientation.y,
              pose.orientation.z, pose.orientation.w]
@@ -318,22 +318,22 @@ class SphericalGrasps(object):
             math.radians(self._fix_tool_frame_to_grasping_frame_roll),
             math.radians(self._fix_tool_frame_to_grasping_frame_pitch),
             math.radians(self._fix_tool_frame_to_grasping_frame_yaw)
-        )
+        )   #eulerで指定されたパラメータを四元数変換
         q = quaternion_multiply(q, fix_tool_to_gripper_rotation_q)
-        fixed_pose = copy.deepcopy(pose)
+        fixed_pose = copy.deepcopy(pose)   #Graspクラスのgrasp_pose.pose用のposeを作成
         fixed_pose.orientation = Quaternion(*q)
 
-        g.grasp_pose = PoseStamped(header, fixed_pose)
+        g.grasp_pose = PoseStamped(header, fixed_pose)   #Graspを試みるエンドエフェクタの姿勢
         g.grasp_quality = self._grasp_quality
 
-        g.pre_grasp_approach = GripperTranslation()
+        g.pre_grasp_approach = GripperTranslation()   #オブジェクトに近づく方向と移動距離を定義
         g.pre_grasp_approach.direction.vector.x = self._pre_grasp_direction_x  # NOQA
         g.pre_grasp_approach.direction.vector.y = self._pre_grasp_direction_y  # NOQA
         g.pre_grasp_approach.direction.vector.z = self._pre_grasp_direction_z  # NOQA
         g.pre_grasp_approach.direction.header.frame_id = self._grasp_postures_frame_id  # NOQA
         g.pre_grasp_approach.desired_distance = self._grasp_desired_distance  # NOQA
         g.pre_grasp_approach.min_distance = self._grasp_min_distance
-        g.post_grasp_retreat = GripperTranslation()
+        g.post_grasp_retreat = GripperTranslation()   #オブジェクトを掴んだ後の移動方向と移動距離を定義
         g.post_grasp_retreat.direction.vector.x = self._post_grasp_direction_x  # NOQA
         g.post_grasp_retreat.direction.vector.y = self._post_grasp_direction_y  # NOQA
         g.post_grasp_retreat.direction.vector.z = self._post_grasp_direction_z  # NOQA
@@ -342,11 +342,11 @@ class SphericalGrasps(object):
         g.post_grasp_retreat.min_distance = self._grasp_min_distance
 
         g.max_contact_force = self._max_contact_force
-        g.allowed_touch_objects = self._allowed_touch_objects
+        g.allowed_touch_objects = self._allowed_touch_objects   #オブジェクトと接触してもよいlinkを設定("gripper_left_finger_link", "gripper_right_finger_link", "gripper_link"の三つがtiago_pick_demo/config/pick_and_place_params.yaml内で定義されている)
 
         return g
 
-    def create_grasps_from_object_pose(self, object_pose):
+    def create_grasps_from_object_pose(self, object_pose):   #メイン関数内で使用
         """
         :type object_pose: PoseStamped
         """
@@ -375,15 +375,15 @@ class SphericalGrasps(object):
             name for name in self._gripper_joint_names.split()]
         jtpoint = JointTrajectoryPoint()
         jtpoint.positions = [
-            float(pos) for pos in self._gripper_pre_grasp_positions.split()]
+            float(pos) for pos in self._gripper_pre_grasp_positions.split()]   #Graspの前にgripperをどれくらい広げるかのパラメータをロード(これをplaceする際のパラメータとして再利用している)
         #Let enough time for the gripper to release the object
         jtpoint.time_from_start = rospy.Duration(3.5)
         pre_grasp_posture.points.append(jtpoint)
         # Generate all the orientations every step_degrees_yaw deg
         for yaw_angle in np.arange(0.0, 2.0 * pi, radians(self._step_degrees_yaw)):
-            pl = PlaceLocation()
+            pl = PlaceLocation()   #Placeを行う際に使用されるゴールのメッセージクラス###############################################################################################################################
             pl.place_pose = posestamped
-            newquat = quaternion_from_euler(0.0, 0.0, yaw_angle)
+            newquat = quaternion_from_euler(0.0, 0.0, yaw_angle)   #eulerで指定されたパラメータを四元数変換
             pl.place_pose.pose.orientation = Quaternion(
                 newquat[0], newquat[1], newquat[2], newquat[3])
             # TODO: the frame is ignored, this will always be the frame of the gripper
