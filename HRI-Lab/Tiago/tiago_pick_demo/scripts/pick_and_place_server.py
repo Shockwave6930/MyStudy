@@ -132,7 +132,7 @@ class PickAndPlaceServer(object):
 		self.pick_as.start()   #Action serverの起動
 
 		self.place_as = SimpleActionServer(
-			'/place_pose', PickUpPoseAction,
+			'create_placings_from_object_pose', PickUpPoseAction,
 			execute_cb=self.place_cb, auto_start=False)   #Action server:/place_poseのAction serverを宣言(pick_demo用に独自定義:tiago_pick_demo/action/PickUpPose.action)
 		self.place_as.start()   #Action serverの起動
 
