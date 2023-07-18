@@ -38,6 +38,8 @@ import cv2
 from cv_bridge import CvBridge
 
 from moveit_msgs.msg import MoveItErrorCodes
+
+#MoveItErrorCodesのkeyとvalueを交換したmoveit_error_dictを定義
 moveit_error_dict = {}
 for name in MoveItErrorCodes.__dict__.keys():
 	if not name[:1] == '_':
@@ -49,119 +51,119 @@ class SphericalService(object):
 		rospy.loginfo("Starting Spherical Grab Service")
 		self.pick_type = PickAruco()
 		rospy.loginfo("Finished SphericalService constructor")
-		self.place_gui = rospy.Service("/place_gui", Empty, self.start_aruco_place)
-		self.pick_gui = rospy.Service("/pick_gui", Empty, self.start_aruco_pick)
+		self.place_gui = rospy.Service("/place_gui", Empty, self.start_aruco_place)   #Service server /place_guiを宣言
+		self.pick_gui = rospy.Service("/pick_gui", Empty, self.start_aruco_pick)   #Service server /pick_guiを宣言
 
 	def start_aruco_pick(self, req):
-		self.pick_type.pick_aruco("pick")
+		self.pick_type.pick_aruco("pick")   #実質的にpickを実行するのはPickArucoクラスのpick_aruco関数
 		return {}
 
 	def start_aruco_place(self, req):
-		self.pick_type.pick_aruco("place")
+		self.pick_type.pick_aruco("place")   #実質的にpickを実行するのはPickArucoクラスのpick_aruco関数,　ちなみにplaceだった場合の動作は定義されていない
 		return {}
 
 class PickAruco(object):
 	def __init__(self):
 		rospy.loginfo("Initalizing...")
-		self.bridge = CvBridge()
-		self.tfBuffer = tf2_ros.Buffer()
-		self.tf_l = tf2_ros.TransformListener(self.tfBuffer)
+		self.bridge = CvBridge()   #<---------------------------------------------------------------------
+		self.tfBuffer = tf2_ros.Buffer()   #<---------------------------------------------------------------------
+		self.tf_l = tf2_ros.TransformListener(self.tfBuffer)   #<---------------------------------------------------------------------
 		rospy.loginfo("Waiting for /pickup_pose AS...")
-		self.pick_as = SimpleActionClient('/pickup_pose', PickUpPoseAction)
+		self.pick_as = SimpleActionClient('/pickup_pose', PickUpPoseAction)   #Action client:/pickup_poseのAction clientを宣言(pick_and_place_server.py:130行目付近でserverは定義)
 		time.sleep(1.0)
-		if not self.pick_as.wait_for_server(rospy.Duration(20)):
+		if not self.pick_as.wait_for_server(rospy.Duration(20)):   #Action serverの起動待ち
 			rospy.logerr("Could not connect to /pickup_pose AS")
-			exit()
+			exit()   #20秒待って起動しなければ終了
 		rospy.loginfo("Waiting for /place_pose AS...")
-		self.place_as = SimpleActionClient('/place_pose', PickUpPoseAction)
+		self.place_as = SimpleActionClient('/place_pose', PickUpPoseAction)   #Action client:/place_poseのAction clientを宣言(pick_and_place_server.py:134行目付近でserverは定義)
 
-		self.place_as.wait_for_server()
+		self.place_as.wait_for_server()   #Action serverの起動待ち
 
 		rospy.loginfo("Setting publishers to torso and head controller...")
 		self.torso_cmd = rospy.Publisher(
-			'/torso_controller/command', JointTrajectory, queue_size=1)
+			'/torso_controller/command', JointTrajectory, queue_size=1)   #torsoのjoint trajectory controllerへのpublisherの宣言
 		self.head_cmd = rospy.Publisher(
-			'/head_controller/command', JointTrajectory, queue_size=1)
+			'/head_controller/command', JointTrajectory, queue_size=1)   #headのjoint trajectory controllerへのpublisherの宣言
 		self.detected_pose_pub = rospy.Publisher('/detected_aruco_pose',
 							 PoseStamped,
 							 queue_size=1,
-							 latch=True)
+							 latch=True)   #topic:/detected_aruco_poseへのpublisherを宣言
 
 		rospy.loginfo("Waiting for '/play_motion' AS...")
-		self.play_m_as = SimpleActionClient('/play_motion', PlayMotionAction)
-		if not self.play_m_as.wait_for_server(rospy.Duration(20)):
+		self.play_m_as = SimpleActionClient('/play_motion', PlayMotionAction)   #play_motion clietnの宣言
+		if not self.play_m_as.wait_for_server(rospy.Duration(20)):   #play motion action serverの起動待ち
 			rospy.logerr("Could not connect to /play_motion AS")
-			exit()
+			exit()   #20秒待って起動しなければ終了
 		rospy.loginfo("Connected!")
 		rospy.sleep(1.0)
 		rospy.loginfo("Done initializing PickAruco.")
 
-	def strip_leading_slash(self, s):
+	def strip_leading_slash(self, s):   #frame_idの先頭の"/"を消すためだけの関数
 		return s[1:] if s.startswith("/") else s
 		
 	def pick_aruco(self, string_operation):
-		self.prepare_robot()
+		self.prepare_robot()   #準備姿勢に移行
 
 		rospy.sleep(2.0)
 		rospy.loginfo("spherical_grasp_gui: Waiting for an aruco detection")
 
-		aruco_pose = rospy.wait_for_message('/aruco_single/pose', PoseStamped)
-		aruco_pose.header.frame_id = self.strip_leading_slash(aruco_pose.header.frame_id)
+		aruco_pose = rospy.wait_for_message('/aruco_single/pose', PoseStamped)   #/aruco_single/poseに流れてきた最初のメッセージのみ購読
+		aruco_pose.header.frame_id = self.strip_leading_slash(aruco_pose.header.frame_id)   #カメラのフレームから先頭の"/"を除去
 		rospy.loginfo("Got: " + str(aruco_pose))
 
-
+		#/aruco_single/poseから得た座標の変換フェーズ
 		rospy.loginfo("spherical_grasp_gui: Transforming from frame: " +
 		aruco_pose.header.frame_id + " to 'base_footprint'")
 		ps = PoseStamped()
 		ps.pose.position = aruco_pose.pose.position
-		ps.header.stamp = self.tfBuffer.get_latest_common_time("base_footprint", aruco_pose.header.frame_id)
+		ps.header.stamp = self.tfBuffer.get_latest_common_time("base_footprint", aruco_pose.header.frame_id)   #<---------------------------------------------------------------------
 		ps.header.frame_id = aruco_pose.header.frame_id
-		transform_ok = False
-		while not transform_ok and not rospy.is_shutdown():
+		transform_ok = False   #フラグ
+		while not transform_ok and not rospy.is_shutdown():   #aruco_pose.pose.positionの座標変換をしたaruco_psが作成できるまでwhileループ(transform_okをフラグとしている)
 			try:
 				transform = self.tfBuffer.lookup_transform("base_footprint", 
 									   ps.header.frame_id,
-									   rospy.Time(0))
-				aruco_ps = do_transform_pose(ps, transform)
+									   rospy.Time(0))   #<---------------------------------------------------------------------
+				aruco_ps = do_transform_pose(ps, transform)   #<---------------------------------------------------------------------
 				transform_ok = True
 			except tf2_ros.ExtrapolationException as e:
 				rospy.logwarn(
 					"Exception on transforming point... trying again \n(" +
 					str(e) + ")")
 				rospy.sleep(0.01)
-				ps.header.stamp = self.tfBuffer.get_latest_common_time("base_footprint", aruco_pose.header.frame_id)
-			pick_g = PickUpPoseGoal()
+				ps.header.stamp = self.tfBuffer.get_latest_common_time("base_footprint", aruco_pose.header.frame_id)   #<---------------------------------------------------------------------
+			pick_g = PickUpPoseGoal()   #pick_and_place_server.pyで定義されたpick_asに送るゴール
 
-		if string_operation == "pick":
-
+		if string_operation == "pick":   #pickしか定義されていない
+			#この辺りのカメラ座標に対するキャリブレーション周りは研究ノートを参照
 			rospy.loginfo("Setting cube pose based on ArUco detection")
 			pick_g.object_pose.pose.position = aruco_ps.pose.position
 			pick_g.object_pose.pose.position.z -= 0.1*(1.0/2.0)
 			rospy.loginfo("aruco pose in base_footprint:" + str(pick_g))
 
 			pick_g.object_pose.header.frame_id = 'base_footprint'
-			pick_g.object_pose.pose.orientation.w = 1.0
-			self.detected_pose_pub.publish(pick_g.object_pose)
+			pick_g.object_pose.pose.orientation.w = 1.0   #デフォルトでは固定だが、aruco_markerのwを参照することもできそう(挙動は未確認)
+			self.detected_pose_pub.publish(pick_g.object_pose)   #topic:/detected_aruco_poseにframe_id=/base_footprintに変換後の座標をpublish
 			rospy.loginfo("Gonna pick:" + str(pick_g))
-			self.pick_as.send_goal_and_wait(pick_g)
+			self.pick_as.send_goal_and_wait(pick_g)   #実際にpickのゴールを送っているのはここ
 			rospy.loginfo("Done!")
 
-			result = self.pick_as.get_result()
-			if str(moveit_error_dict[result.error_code]) != "SUCCESS":
+			result = self.pick_as.get_result()   #resultの確認
+			if str(moveit_error_dict[result.error_code]) != "SUCCESS":   #moveit error codeがsuccessの1以外なら処理をここまでで止める
 				rospy.logerr("Failed to pick, not trying further")
 				return
 
 			# Raise arm
-			self.prepare_placing_robot()
+			self.prepare_placing_robot()   #この行が実行された時点でpickは成功した判定になる
 			rospy.loginfo("Check!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Raise object done.")
 
 			# Place the object back to its position
 			rospy.loginfo("Gonna place near where it was")
 			pick_g.object_pose.pose.position.z += 0.07
-			self.place_as.send_goal_and_wait(pick_g)
+			self.place_as.send_goal_and_wait(pick_g)   #placeのためのゴール送信、以降のエラーはpick_and_place_server側のもの
 			rospy.loginfo("Done!")
 
-	def lower_head(self):
+	def lower_head(self):   #headのjoint trajectory controllerを使用して頭を下げるが、実際に呼ばれるのは次のprepare_robot関数とprepare_placing_robot内でのみ
 		rospy.loginfo("Moving head down")
 		jt = JointTrajectory()
 		jt.joint_names = ['head_1_joint', 'head_2_joint']
@@ -172,23 +174,23 @@ class PickAruco(object):
 		self.head_cmd.publish(jt)
 		rospy.loginfo("Done.")
 
-	def prepare_robot(self):
+	def prepare_robot(self):   #play_motion action clientを使用して/tiago_pick_demo/config/pick_motionで事前定義したpregraspを実行
 		rospy.loginfo("Unfold arm safely")
 		pmg = PlayMotionGoal()
-		pmg.motion_name = 'pregrasp' #revised(dafault="pregrasp")
-		pmg.skip_planning = False
-		self.play_m_as.send_goal_and_wait(pmg)
+		pmg.motion_name = 'pregrasp'   #revised(dafault="pregrasp")
+		pmg.skip_planning = False   #Falseにしておくと現在の姿勢からplay_motionで定義された最初の姿勢までをMoveItにプランニングさせることが可能
+		self.play_m_as.send_goal_and_wait(pmg)   #play_motionに送るgoalにはmotion nameとskip_planningのパラメータだけで良さそう
 		rospy.loginfo("Done.")
 
 		self.lower_head()
 
 		rospy.loginfo("Robot prepared.")
 
-	def prepare_placing_robot(self):
+	def prepare_placing_robot(self):   #pickが成功した後、play_motion action clientを使用して/tiago_pick_demo/config/pick_motionで事前定義したpick_final_poseを実行
 		rospy.loginfo("Grasp Success")
 		pmg = PlayMotionGoal()
 		pmg.motion_name = 'pick_final_pose'
-		pmg.skip_planning = False
+		pmg.skip_planning = False   #Falseにしておくと現在の姿勢からplay_motionで定義された最初の姿勢までをMoveItにプランニングさせることが可能
 		self.play_m_as.send_goal_and_wait(pmg)
 		rospy.loginfo("Done.")
 
