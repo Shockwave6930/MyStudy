@@ -24,7 +24,7 @@
 import rospy
 from spherical_grasps_server import SphericalGrasps
 from actionlib import SimpleActionClient, SimpleActionServer
-from moveit_commander import PlanningSceneInterface
+from moveit_commander import PlanningSceneInterface, MoveGroupCommander
 from moveit_msgs.msg import Grasp, PickupAction, PickupGoal, PickupResult, MoveItErrorCodes
 from moveit_msgs.msg import PlaceAction, PlaceGoal, PlaceResult, PlaceLocation
 from geometry_msgs.msg import Pose, PoseStamped, PoseArray, Vector3Stamped, Vector3, Quaternion
@@ -73,7 +73,7 @@ def createPlaceGoal(place_pose,
 	"""Create PlaceGoal with the provided data"""
 	placeg = PlaceGoal()
 	placeg.attached_object_name = target   #planning scene内でのオブジェクト名
-    placeg.group_name = group   #placeに用いるグループ名
+	placeg.group_name = group   #placeに用いるグループ名
 	placeg.place_locations = place_locations   #place_locationで掴む際の姿勢、エンドエフェクタの位置、アプローチモーション、後退モーション、掴む過程で触って/押して/移動できる障害物のリスト
 	placeg.allowed_planning_time = 15.0   #motion plannerのplannningの制限時間
 	placeg.planning_options.planning_scene_diff.is_diff = True   #planning sceneで差分を考慮する
@@ -91,11 +91,11 @@ class PickAndPlaceServer(object):
 		rospy.loginfo("Initalizing PickAndPlaceServer...")
 		self.sg = SphericalGrasps()
 		rospy.loginfo("Connecting to pickup AS")
-		self.pickup_ac = SimpleActionClient('/pickup', PickupAction)   #Action server:/pickupのAction clientを宣言
+		self.pickup_ac = SimpleActionClient('/pickup', PickupAction)   #Action server:/pickupのAction clientを宣言<---------------------------------------------------------------------
 		self.pickup_ac.wait_for_server()   #Action serverの起動を待つ
 		rospy.loginfo("Succesfully connected.")
 		rospy.loginfo("Connecting to place AS")
-		self.place_ac = SimpleActionClient('/place', PlaceAction)   #Action server:/placeのAction clientを宣言
+		self.place_ac = SimpleActionClient('/place', PlaceAction)   #Action server:/placeのAction clientを宣言<---------------------------------------------------------------------
 		self.place_ac.wait_for_server()   #Action serverの起動を待つ
 		rospy.loginfo("Succesfully connected.")
 		self.scene = PlanningSceneInterface()   #ワールド管理用
@@ -107,7 +107,7 @@ class PickAndPlaceServer(object):
 
 		rospy.loginfo("Connecting to clear octomap service...")
 		self.clear_octomap_srv = rospy.ServiceProxy(
-			'/clear_octomap', Empty)   #service server:/clear_octmapのsercice clientの宣言
+			'/clear_octomap', Empty)   #service server:/clear_octmapのsercice clientの宣言。どこでこのサーバーを宣言しているのか不明<---------------------------------------------------------------------
 		self.clear_octomap_srv.wait_for_service()   #Service serverの起動を待つ
 		rospy.loginfo("Connected!")
 
@@ -160,16 +160,16 @@ class PickAndPlaceServer(object):
 		else:
 			self.place_as.set_succeeded(p_res)   #Resultの返却
 
-	def wait_for_planning_scene_object(self, object_name='part'):
+	def wait_for_planning_scene_object(self, object_name='part'):   #プランニングシーンにobject_nameの物体が追加されたことが確認できるまでwhileループし続ける関数、チェック用
 		rospy.loginfo(
 			"Waiting for object '" + object_name + "'' to appear in planning scene...")
-		gps_req = GetPlanningSceneRequest()
-		gps_req.components.components = gps_req.components.WORLD_OBJECT_NAMES
+		gps_req = GetPlanningSceneRequest()   #<---------------------------------------------------------------------
+		gps_req.components.components = gps_req.components.WORLD_OBJECT_NAMES   #<---------------------------------------------------------------------
 		
 		part_in_scene = False
 		while not rospy.is_shutdown() and not part_in_scene:
 			# This call takes a while when rgbd sensor is set
-			gps_resp = self.scene_srv.call(gps_req)
+			gps_resp = self.scene_srv.call(gps_req)   #<---------------------------------------------------------------------
 			# check if 'part' is in the answer
 			for collision_obj in gps_resp.scene.world.collision_objects:
 				if collision_obj.id == object_name:
@@ -186,80 +186,89 @@ class PickAndPlaceServer(object):
 		self.scene.remove_world_object("part")   #planning sceneからロボットに接続されたオブジェクト名=partのオブジェクト(掴む物体)を削除
 		self.scene.remove_world_object("table")   #planning sceneからロボットに接続されたオブジェクト名=tableのオブジェクト(机)を削除
 		rospy.loginfo("Clearing octomap")
-		self.clear_octomap_srv.call(EmptyRequest())
+		self.clear_octomap_srv.call(EmptyRequest())   #このサービスがどこで宣言されているか不明なため、詳細な処理は調べる必要がある<---------------------------------------------------------------------
 		rospy.sleep(2.0)  # Removing is fast
 		rospy.loginfo("Adding new 'part' object")
 
 		rospy.loginfo("Object pose: %s", object_pose.pose)
-		object_pose.pose.position.z += 0.016
+		object_pose.pose.position.z += 0.016   #marker検出座標に対するキャリブレーション
 		
 		#Add object description in scene
-        #対象の物体を"part"と命名し、プランニングシーンのobject_poseの座標に、サイズを[self.object_depth, self.object_width, self.object_height]として指定
-		self.scene.add_box("part", object_pose, (self.object_depth, self.object_width, self.object_height))
-
+        #対象の物体を"part"と命名し、プランニングシーンのobject_poseの座標に中心が来るように、サイズを[self.object_depth, self.object_width, self.object_height]として追加
+		self.scene.add_box("part", object_pose, (self.object_depth, self.object_width, self.object_height))   #default box
+		#self.scene.add_cylinder("part", object_pose, self.object_height, 0.033)   #empty can
+		#self.scene.add_sphere("part", object_pose, radius=0.031)   #tennis ball
+		#self.scene.add_sphere("part", object_pose, radius=0.040)   #ball
+		#self.scene.add_sylinder("part", object_pose, self.object_height, 0.0325)   #mugitya
+		#self.scene.add_sylinder("part", object_pose, self.object_height, 0.0350)   #plastic cap
 		rospy.loginfo("Second%s", object_pose.pose)
-		table_pose = copy.deepcopy(object_pose)
+		table_pose = copy.deepcopy(object_pose)   #y座標はそのまま使えるためひとまずコピー
 
 		#define a virtual table below the object
+		#この辺の詳細な処理は研究ノートを参照
 		table_height = object_pose.pose.position.z - 0.016 - self.object_height/2 + 0.015
 		table_width  = 1.0
 		table_depth  = 1.2
 		table_pose.pose.position.x = 1.1
 		table_pose.pose.position.z = table_height/2
 
-		self.scene.add_box("table", table_pose, (table_depth, table_width, table_height))
+		self.scene.add_box("table", table_pose, (table_depth, table_width, table_height))   #プランニングシーンにtable_poseを中心とした、サイズ(table_depth, table_width, table_height)の机を追加
 
 		# # We need to wait for the object part to appear
-		self.wait_for_planning_scene_object()
-		self.wait_for_planning_scene_object("table")
+		self.wait_for_planning_scene_object()   #partが追加されたかどうかを確認
+		self.wait_for_planning_scene_object("table")   #tableが追加されたかどうかを確認
 
 		# compute grasps
-		possible_grasps = self.sg.create_grasps_from_object_pose(object_pose)
-		self.pickup_ac
+		possible_grasps = self.sg.create_grasps_from_object_pose(object_pose)   #class SphericalGrasps()のメソッド、これが最も重要な処理を行っている部分<---------------------------------------------------------------------
+		self.pickup_ac   #??? これ必要か?
 		goal = createPickupGoal(
-			"arm_torso", "part", object_pose, possible_grasps, self.links_to_allow_contact)
+			"arm_torso", "part", object_pose, possible_grasps, self.links_to_allow_contact)   #ゴール作成
 
 		rospy.loginfo("Sending goal")
-		self.pickup_ac.send_goal(goal)
+		self.pickup_ac.send_goal(goal)   #action serverにゴールを送信, 結局pickup action serverの中身ってどこに定義されているのか<---------------------------------------------------------------------
 		rospy.loginfo("Waiting for result")
-		self.pickup_ac.wait_for_result()
-		result = self.pickup_ac.get_result()
+		self.pickup_ac.wait_for_result()   #resultが帰ってくるまで待機
+		result = self.pickup_ac.get_result()   #resultを取得
 		rospy.logdebug("Using torso result: " + str(result))
 		rospy.loginfo(
 			"Pick result: " +
 		str(moveit_error_dict[result.error_code.val]))
 
-		return result.error_code.val
+		return result.error_code.val   #moveitのerror codeを返却
+	
+	def prepare_placing_object(self):
+		rospy.loginfo("")
+		
 
 	def place_object(self, object_pose):
 		rospy.loginfo("Clearing octomap")
-		self.clear_octomap_srv.call(EmptyRequest())
+		self.clear_octomap_srv.call(EmptyRequest())   #このサービスがどこで宣言されているか不明なため、詳細な処理は調べる必要がある<---------------------------------------------------------------------
 		possible_placings = self.sg.create_placings_from_object_pose(
-			object_pose)
+			object_pose)   #class SphericalGrasps()のメソッド、これが最も重要な処理を行っている部分<---------------------------------------------------------------------
 		# Try only with arm
 		rospy.loginfo("Trying to place using only arm")
 		goal = createPlaceGoal(
-			object_pose, possible_placings, "arm", "part", self.links_to_allow_contact)
+			object_pose, possible_placings, "arm", "part", self.links_to_allow_contact)   #ゴール作成、ただしこちらはpickの際のgoalと違い、planning groupは"arm_torso"ではなく"arm"を指定
 		rospy.loginfo("Sending goal")
-		self.place_ac.send_goal(goal)
+		self.place_ac.send_goal(goal)   #action serverにゴールを送信, 結局place action serverの中身ってどこに定義されているのか<---------------------------------------------------------------------
 		rospy.loginfo("Waiting for result")
 
-		self.place_ac.wait_for_result()
-		result = self.place_ac.get_result()
+		self.place_ac.wait_for_result()   #resultが返却されるのを待つ
+		result = self.place_ac.get_result()   #resultの取得
 		rospy.loginfo(str(moveit_error_dict[result.error_code.val]))
 
-		if str(moveit_error_dict[result.error_code.val]) != "SUCCESS":
+		if str(moveit_error_dict[result.error_code.val]) != "SUCCESS":   #もしarmだけでやって失敗したらarm_torsoで二回目を実行する
 			rospy.loginfo(
 				"Trying to place with arm and torso")
 			# Try with arm and torso
 			goal = createPlaceGoal(
-				object_pose, possible_placings, "arm_torso", "part", self.links_to_allow_contact)
+				object_pose, possible_placings, "arm_torso", "part", self.links_to_allow_contact)   #ゴール作成、今度はplanning groupをarm_torsoに指定
 			rospy.loginfo("Sending goal")
-			self.place_ac.send_goal(goal)
+			self.place_ac.send_goal(goal)   #action serverにゴールを送信, 結局place action serverの中身ってどこに定義されているのか<---------------------------------------------------------------------
 			rospy.loginfo("Waiting for result")
 
-			self.place_ac.wait_for_result()
-			result = self.place_ac.get_result()
+			self.place_ac.wait_for_result()   #resultが返却されるのを待つ
+			result = self.place_ac.get_result()   #resultの取得
 			rospy.logerr(str(moveit_error_dict[result.error_code.val]))
 		
 		# print result
@@ -267,7 +276,7 @@ class PickAndPlaceServer(object):
 			"Result: " +
 			str(moveit_error_dict[result.error_code.val]))
 		rospy.loginfo("Removing previous 'part' object")
-		self.scene.remove_world_object("part")
+		self.scene.remove_world_object("part")   #planning sceneからロボットに接続されたオブジェクト名=partのオブジェクト(掴む物体)のみを削除。これは継続して新たな物体のpick, placeを実行する際に既存のオブジェクトは考慮する必要があるため、tableは残していると考えられる
 
 		return result.error_code.val
 
