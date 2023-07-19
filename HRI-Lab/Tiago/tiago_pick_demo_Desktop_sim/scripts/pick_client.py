@@ -27,16 +27,12 @@ from geometry_msgs.msg import PoseStamped, Pose
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from play_motion_msgs.msg import PlayMotionAction, PlayMotionGoal
 from actionlib import SimpleActionClient
-
 import tf2_ros
 from tf2_geometry_msgs import do_transform_pose
-
 import numpy as np
 from std_srvs.srv import Empty
-
 import cv2
 from cv_bridge import CvBridge
-
 from moveit_msgs.msg import MoveItErrorCodes
 
 #MoveItErrorCodesのkeyとvalueを交換したmoveit_error_dictを定義
@@ -68,6 +64,7 @@ class PickAruco(object):
 		self.bridge = CvBridge()   #<---------------------------------------------------------------------
 		self.tfBuffer = tf2_ros.Buffer()   #<---------------------------------------------------------------------
 		self.tf_l = tf2_ros.TransformListener(self.tfBuffer)   #<---------------------------------------------------------------------
+                
 		rospy.loginfo("Waiting for /pickup_pose AS...")
 		self.pick_as = SimpleActionClient('/pickup_pose', PickUpPoseAction)   #Action client:/pickup_poseのAction clientを宣言(pick_and_place_server.py:130行目付近でserverは定義)
 		time.sleep(1.0)
@@ -76,14 +73,11 @@ class PickAruco(object):
 			exit()   #20秒待って起動しなければ終了
 		rospy.loginfo("Waiting for /place_pose AS...")
 		self.place_as = SimpleActionClient('/place_pose', PickUpPoseAction)   #Action client:/place_poseのAction clientを宣言(pick_and_place_server.py:134行目付近でserverは定義)
-
 		self.place_as.wait_for_server()   #Action serverの起動待ち
 
 		rospy.loginfo("Setting publishers to torso and head controller...")
-		self.torso_cmd = rospy.Publisher(
-			'/torso_controller/command', JointTrajectory, queue_size=1)   #torsoのjoint trajectory controllerへのpublisherの宣言
-		self.head_cmd = rospy.Publisher(
-			'/head_controller/command', JointTrajectory, queue_size=1)   #headのjoint trajectory controllerへのpublisherの宣言
+		self.torso_cmd = rospy.Publisher('/torso_controller/command', JointTrajectory, queue_size=1)   #torsoのjoint trajectory controllerへのpublisherの宣言
+		self.head_cmd = rospy.Publisher('/head_controller/command', JointTrajectory, queue_size=1)   #headのjoint trajectory controllerへのpublisherの宣言
 		self.detected_pose_pub = rospy.Publisher('/detected_aruco_pose',
 							 PoseStamped,
 							 queue_size=1,
@@ -139,6 +133,7 @@ class PickAruco(object):
 			rospy.loginfo("Setting cube pose based on ArUco detection")
 			pick_g.object_pose.pose.position = aruco_ps.pose.position
 			pick_g.object_pose.pose.position.z -= 0.1*(1.0/2.0)
+
 			rospy.loginfo("aruco pose in base_footprint:" + str(pick_g))
 
 			pick_g.object_pose.header.frame_id = 'base_footprint'
@@ -153,15 +148,31 @@ class PickAruco(object):
 				rospy.logerr("Failed to pick, not trying further")
 				return
 
-			# Raise arm
-			self.prepare_placing_robot()   #この行が実行された時点でpickは成功した判定になる
-			rospy.loginfo("Check!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Raise object done.")
+			# Move torso to its maximum height
+            #self.lift_torso()
 
-			# Place the object back to its position
-			rospy.loginfo("Gonna place near where it was")
-			pick_g.object_pose.pose.position.z += 0.07
-			self.place_as.send_goal_and_wait(pick_g)   #placeのためのゴール送信、以降のエラーはpick_and_place_server側のもの
+            # Raise arm
+			#rospy.loginfo("Moving arm to a safe pose")
+			#pmg = PlayMotionGoal()
+            #pmg.motion_name = 'pick_final_pose'
+			#pmg.skip_planning = False
+			#py.loginfo("Raise object done.")   #この行が実行された時点でpickは成功した判定になる
+
+            # Place the object back to its position
+			#"rospy.loginfo("Gonna place near where it was")
+			#pick_g.object_pose.pose.position.z += 0.05
+			#self.place_as.send_goal_and_wait(pick_g)   #placeのためのゴール送信、以降のエラーはpick_and_place_server側のもの
 			rospy.loginfo("Done!")
+
+	def lift_torso(self):
+		rospy.loginfo("Moving torso up")
+		jt = JointTrajectory()
+		jt.joint_names = ['torso_lift_joint']
+		jtp = JointTrajectoryPoint()
+		jtp.positions = [0.34]
+		jtp.time_from_start = rospy.Duration(2.5)
+		jt.points.append(jtp)
+		self.torso_cmd.publish(jt)
 
 	def lower_head(self):   #headのjoint trajectory controllerを使用して頭を下げるが、実際に呼ばれるのは次のprepare_robot関数とprepare_placing_robot内でのみ
 		rospy.loginfo("Moving head down")
@@ -177,7 +188,7 @@ class PickAruco(object):
 	def prepare_robot(self):   #play_motion action clientを使用して/tiago_pick_demo/config/pick_motionで事前定義したpregraspを実行
 		rospy.loginfo("Unfold arm safely")
 		pmg = PlayMotionGoal()
-		pmg.motion_name = 'pregrasp'   #revised(dafault="pregrasp")
+		pmg.motion_name = 'pregrasp'
 		pmg.skip_planning = False   #Falseにしておくと現在の姿勢からplay_motionで定義された最初の姿勢までをMoveItにプランニングさせることが可能
 		self.play_m_as.send_goal_and_wait(pmg)   #play_motionに送るgoalにはmotion nameとskip_planningのパラメータだけで良さそう
 		rospy.loginfo("Done.")
@@ -186,20 +197,9 @@ class PickAruco(object):
 
 		rospy.loginfo("Robot prepared.")
 
-	def prepare_placing_robot(self):   #pickが成功した後、play_motion action clientを使用して/tiago_pick_demo/config/pick_motionで事前定義したpick_final_poseを実行
-		rospy.loginfo("Grasp Success")
-		pmg = PlayMotionGoal()
-		pmg.motion_name = 'pick_final_pose'
-		pmg.skip_planning = False   #Falseにしておくと現在の姿勢からplay_motionで定義された最初の姿勢までをMoveItにプランニングさせることが可能
-		self.play_m_as.send_goal_and_wait(pmg)
-		rospy.loginfo("Done.")
-
-		self.lower_head()
-
-		rospy.loginfo("Robot prepared to place")
-
 
 if __name__ == '__main__':
 	rospy.init_node('pick_aruco_demo')
 	sphere = SphericalService()
 	rospy.spin()
+
