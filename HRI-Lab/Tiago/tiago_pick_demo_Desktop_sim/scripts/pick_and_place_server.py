@@ -23,6 +23,8 @@
 
 import rospy
 import tf
+import tf2_geometry_msgs
+import tf2_ros
 from spherical_grasps_server import SphericalGrasps
 from actionlib import SimpleActionClient, SimpleActionServer
 from moveit_commander import PlanningSceneInterface, MoveGroupCommander, RobotCommander
@@ -36,8 +38,10 @@ from std_srvs.srv import Empty, EmptyRequest
 from copy import deepcopy
 from random import shuffle
 import copy
+import math
 import actionlib
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from geometry_msgs.msg import Twist
 
 moveit_error_dict = {}
 for name in MoveItErrorCodes.__dict__.keys():
@@ -137,6 +141,11 @@ class PickAndPlaceServer(object):
 		self.place_as = SimpleActionServer('/place_pose', PickUpPoseAction, execute_cb=self.place_cb, auto_start=False)   #Action server:/place_poseのAction serverを宣言(pick_demo用に独自定義:tiago_pick_demo/action/PickUpPose.action)
 		self.place_as.start()   #Action serverの起動
 		##self.prepare_placing_object() ###trying
+		self.move_base_pub = rospy.Publisher('/mobile_base_controller/cmd_vel', Twist, queue_size=10)
+		self.tfBuffer = tf2_ros.Buffer()
+		self.listerner = tf2_ros.TransformListener(self.tfBuffer)
+		#self.get_tiago_information(True)
+		self.push()
 
 	def pick_cb(self, goal):   #pick_asのコールバック関数だが、実際のプランニングシーンへの物体追加からプランニング、実行まではgrasp_object関数が担っており、実体としてはエラーコード管理用である
 		"""
@@ -231,17 +240,24 @@ class PickAndPlaceServer(object):
 		#destination_pose.position.x = self.move_group.get_current_pose().pose.position.x
 		#destination_pose.position.y = self.move_group.get_current_pose().pose.position.y
 		#destination_pose.position.z = object_pose.pose.position.z + 0.05
-		self.prepare_placing_object()   #そのままplace動作に入る
+		#self.prepare_placing_object()   #そのままplace動作に入る
 		return result.error_code.val   #moveitのerror codeを返却
 
 	def euler_to_quaternion(self, euler):
 		"""Convert Euler Angles to Quaternion
-
 		euler: geometry_msgs/Vector3
 		quaternion: geometry_msgs/Quaternion
 		"""
 		q = tf.transformations.quaternion_from_euler(euler.x, euler.y, euler.z)
 		return Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
+
+	def quaternion_to_euler(self, quaternion):   #指定された角度回転するまで/cmd_velにメッセージを送信し続ける
+		"""Convert Quaternion to Euler Angles
+		quarternion: geometry_msgs/Quaternion
+		euler: geometry_msgs/Vector3
+		"""
+		e = tf.transformations.euler_from_quaternion((quaternion.x, quaternion.y, quaternion.z, quaternion.w))
+		return Vector3(x=e[0], y=e[1], z=e[2])
 
 	def get_tiago_information(self, option=False):
 		rospy.loginfo("\n\n\n\n\n")
@@ -277,6 +293,56 @@ class PickAndPlaceServer(object):
 			#print("Printing trajectory constraints:", self.move_group.get_trajectory_constraints())
 		rospy.loginfo("=========================================================================================================================================================")
 		rospy.loginfo("\n\n\n\n\n")
+	
+	def push(self):
+		flag = False
+		robot_pose = tf2_geometry_msgs.PoseStamped()
+		robot_pose.header.frame_id = "base_footprint"
+		robot_pose.header.stamp = rospy.Time(0)
+		# Orientationも変換したい場合はwを1.0にする。
+		robot_pose.pose.orientation.w = 1.0
+		first_z = 0
+		while not rospy.is_shutdown() and not flag:
+			try:
+				# base_linkフレームの原点をmapフレーム上の座標に変換
+				global_pose = self.tfBuffer.transform(robot_pose, "odom")
+				print(global_pose.pose.orientation)
+				e = self.quaternion_to_euler(global_pose.pose.orientation)   #ラジアン
+				first_z = e.z * 180 / math.pi
+				flag = True
+			except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+				rospy.sleep(0.1)
+				continue
+		now_z = first_z
+		rate = rospy.Rate(3) # 10hz
+		while not rospy.is_shutdown() and abs(now_z - first_z) < 90:
+			msg = Twist()
+			msg.linear.x = 0
+			msg.linear.y = 0
+			msg.linear.z = 0
+			msg.angular.x = 0
+			msg.angular.y = 0
+			msg.angular.z = 0.3
+			#print(msg)
+			self.move_base_pub.publish(msg)
+			robot_pose = tf2_geometry_msgs.PoseStamped()
+			robot_pose.header.frame_id = "base_footprint"
+			robot_pose.header.stamp = rospy.Time(0)
+			# Orientationも変換したい場合はwを1.0にする。
+			robot_pose.pose.orientation.w = 1.0
+
+			try:
+				# base_linkフレームの原点をmapフレーム上の座標に変換
+				global_pose = self.tfBuffer.transform(robot_pose, "odom")
+				print(global_pose.pose.orientation)
+				e = self.quaternion_to_euler(global_pose.pose.orientation)   #ラジアン
+				now_z = e.z * 180 / math.pi
+				print(now_z)   #度
+			except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+				print("WARNING: tf map to base_link not found.")
+				rospy.sleep(1)
+				continue
+			rate.sleep()
 
 	def prepare_placing_object(self):
 		#self.clear_octomap_srv.call(EmptyRequest())
