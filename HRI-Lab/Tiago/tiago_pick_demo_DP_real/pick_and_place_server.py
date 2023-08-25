@@ -39,6 +39,8 @@ import copy
 import actionlib
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 
+###git test
+
 moveit_error_dict = {}
 for name in MoveItErrorCodes.__dict__.keys():
 	if not name[:1] == '_':
