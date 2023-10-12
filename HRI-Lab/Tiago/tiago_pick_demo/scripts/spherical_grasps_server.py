@@ -52,7 +52,7 @@ def normalize(v):   #正規化関数
 
 # http://stackoverflow.com/questions/17044296/quaternion-rotation-without-euler-angles
 
-def quaternion_from_vectors(v0, v1):
+def quaternion_from_vectors(v0, v1):   #v0からv1への回転クオータニオンを求める
     if type(v0) == Point():
         v0 = [v0.x, v0.y, v0.z]
     if type(v1) == Point():
@@ -179,7 +179,7 @@ class SphericalGrasps(object):
         ori_y = 0.0
         ori_z = 0.0
         sphere_poses = []
-        rotated_q = quaternion_from_euler(0.0, 0.0, math.radians(180))   #eulerで指定されたパラメータを四元数変換
+        rotated_q = quaternion_from_euler(0.0, 0.0, math.radians(180))   #[x, y, z]の順番  #eulerで指定されたパラメータを四元数変換
 
         yaw_qtty = int((self._max_degrees_yaw - self._min_degrees_yaw) / self._step_degrees_yaw)  # NOQA
         pitch_qtty = int((self._max_degrees_pitch - self._min_degrees_pitch) / self._step_degrees_pitch)  # NOQA
@@ -196,10 +196,10 @@ class SphericalGrasps(object):
         rospy.loginfo(info_str)
 
         # altitude is yaw
-        for altitude in range(self._min_degrees_yaw, self._max_degrees_yaw, self._step_degrees_yaw):  # NOQA
+        for altitude in range(self._min_degrees_yaw, self._max_degrees_yaw, self._step_degrees_yaw):  # NOQA   #range(240, 300, 5)
             altitude = math.radians(altitude)
             # azimuth is pitch
-            for azimuth in range(self._min_degrees_pitch, self._max_degrees_pitch, self._step_degrees_pitch):  # NOQA
+            for azimuth in range(self._min_degrees_pitch, self._max_degrees_pitch, self._step_degrees_pitch):  # NOQA   #range(0, 360, 15)
                 azimuth = math.radians(azimuth)
                 # This gets all the positions
                 x = ori_x + radius * math.cos(azimuth) * math.cos(altitude)
