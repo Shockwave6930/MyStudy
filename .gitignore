@@ -6,4 +6,7 @@
 /a.out.DSYM/
 a.out
 test.cpp
+<<<<<<< HEAD
 assets-463015-28cc88ee06aa.json
+=======
+>>>>>>> 1663d07cc1a7def70a0d9547740e84a4a1979add
