@@ -1,0 +1,2 @@
+My lab's PC:~/catkin_ws/src
+Hri-guest08 in Room 307:~/robotclass_ws/src/robot_class_dan
