@@ -1,0 +1,496 @@
+[33mcommit add19033847571e85005a8938fcb4e9753231e33[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 15:22:13 2025 +0900
+
+    test2
+
+[33mcommit cc205e70533dfead3cb27a0ceed383247e73c201[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 15:21:16 2025 +0900
+
+    test
+
+[33mcommit 90f3f87d7e598c021e4b14454b432ad914e1ae28[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 15:18:23 2025 +0900
+
+    aa
+
+[33mcommit e4a08ef5f576f72bd1af63b2d0c4fc62ad006c5d[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 15:14:56 2025 +0900
+
+    202508113
+
+[33mcommit 9a9a01bce05e3fb61be09ce6e64d6be058ece085[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 15:14:04 2025 +0900
+
+    202508112
+
+[33mcommit 8ec6064b1e23af8f8db347f0d2ac0c61b6eef1b0[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 15:13:09 2025 +0900
+
+    202508112
+
+[33mcommit 5db26ce385bf26fff7f1e050ab7aecc8e380b00b[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 15:03:04 2025 +0900
+
+    202508111
+
+[33mcommit f2052ff95dad0ea65639d53a4e3ae3067a4eed26[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 15:02:03 2025 +0900
+
+    20250811
+
+[33mcommit 854da3604a8a56d0fa8faabf42083dd452b55a6b[m
+Author: Hyrein <dan.ohashi1152@gmail.com>
+Date:   Mon Aug 11 14:57:30 2025 +0900
+
+    20250811
+
+[33mcommit 1663d07cc1a7def70a0d9547740e84a4a1979add[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: DevelopmentPC <dan.ohashi1152@gmail.com>
+Date:   Sat Aug 26 16:40:05 2023 +0900
+
+    DP
+
+[33mcommit 981d0df1f344cdb316bc3a937952e1601535b42f[m
+Author: DevelopmentPC <dan.ohashi1152@gmail.com>
+Date:   Fri Aug 25 12:15:50 2023 +0900
+
+    test
+
+[33mcommit 96c702ce8e12e66b9cfb1900b82ffc4072084761[m
+Author: HRI <dan.ohashi1152@gmail.com>
+Date:   Fri Aug 18 18:02:09 2023 +0900
+
+    20230818
+
+[33mcommit 0e26fddc921ac0a07d36b52a56504f551e032366[m
+Merge: cf7e25b c7f61f6
+Author: HRI <dan.ohashi1152@gmail.com>
+Date:   Wed Jul 19 15:12:05 2023 +0900
+
+    Merge branch 'master' of https://github.com/Shockwave6930/MyStudy
+
+[33mcommit cf7e25b2360210ac9177efdbce6f76bc812e0ae3[m
+Author: HRI <dan.ohashi1152@gmail.com>
+Date:   Wed Jul 19 15:11:08 2023 +0900
+
+    デスクトップのシミュレーション用コードを統一
+
+[33mcommit c7f61f6f6e5ccb369220c21419e90c32f5157b82[m
+Merge: da5591e 0fc9a85
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Tue Jul 18 15:56:22 2023 +0900
+
+    mac分
+
+[33mcommit da5591e46bfe75d7c5250ea9f39d4cc6a98464f1[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Tue Jul 18 15:53:00 2023 +0900
+
+    mac_old
+
+[33mcommit 0fc9a855f871ac88b3ea2e0f47958f0dd7831968[m
+Author: HRI <dan.ohashi1152@gmail.com>
+Date:   Tue Jul 18 12:08:00 2023 +0900
+
+    success code
+
+[33mcommit 445460c3f773940f1dc4be3a634d70efabd85f6c[m
+Author: HRI <dan.ohashi1152@gmail.com>
+Date:   Mon Jul 10 20:57:20 2023 +0900
+
+    20230710
+
+[33mcommit 0eb13f05566cece873f168c26026a41115ab8b4d[m
+Author: HRI <dan.ohashi1152@gmail.com>
+Date:   Sun Jul 9 23:48:34 2023 +0900
+
+    家でやりたい
+
+[33mcommit a0c43f7b58c5b473c8bc46886dcc90dbff55a81c[m
+Merge: 338aca7 2c06c4d
+Author: HRI <dan.ohashi1152@gmail.com>
+Date:   Wed Jun 7 18:30:20 2023 +0900
+
+    20230607-daily
+
+[33mcommit 338aca79e106212a25bf2fe2957160b8f81e9fc6[m
+Author: HRI <dan.ohashi1152@gmail.com>
+Date:   Wed Jun 7 15:36:40 2023 +0900
+
+    a
+
+[33mcommit 2c06c4d5398636a3723207d0cf0381fc7097c9b8[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Wed Jun 7 15:06:44 2023 +0900
+
+    tiago_pick_demo
+
+[33mcommit 03f5cc8e99ee2c9b92d540e4674fa76c3915fd2c[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Wed Jun 7 14:44:19 2023 +0900
+
+    20230607Mac
+
+[33mcommit 816c5f844b205169f69680efdc5adc33345f6a3a[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sat Dec 3 20:53:28 2022 +0900
+
+    編集距離
+
+[33mcommit 5172f935dff4d6b0a0bb1ffcf95d7d964f7f63e9[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sat Dec 3 01:24:43 2022 +0900
+
+    20221203
+
+[33mcommit a13312eda46d7ce766a1855237cce45a4aec346a[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sat Nov 26 20:38:30 2022 +0900
+
+    greedy
+
+[33mcommit 9a4fbbe6023e15e661f8df07265e14a2fa4839f5[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Mon Nov 21 23:51:57 2022 +0900
+
+    二分探索ラスト
+
+[33mcommit 0b533da67b73013b09f3783dff826d75b32e4c93[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Thu Nov 17 02:29:51 2022 +0900
+
+    MNIST
+
+[33mcommit ea62bfe32f16fdf76c2dbad7a57d354f3405640b[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Wed Nov 16 23:03:10 2022 +0900
+
+    saikin
+
+[33mcommit e5073ef87041e9835118a760ecc7374f49b45ea6[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Mon Nov 7 13:21:35 2022 +0900
+
+    test
+
+[33mcommit 4e162f2d59fb72ae1a43bc8b8568b5b92a1c57e9[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sun Nov 6 20:01:20 2022 +0900
+
+    Algorithm
+
+[33mcommit 0076329e92fb6982e53a6b57f410a8fe5b107566[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Thu Oct 13 21:44:27 2022 +0900
+
+    tiago tutorial 4-4
+
+[33mcommit 7f15f01a70abd126b42cd9866d63a7a5e0be53eb[m
+Merge: 2355cc7 2241f0c
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Tue Oct 11 16:51:52 2022 +0900
+
+    retry
+
+[33mcommit 2355cc726047828ede134cb5549d1f7068eb2930[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Tue Oct 11 16:50:18 2022 +0900
+
+    retry
+
+[33mcommit 2241f0cf98ef80c0a4e27c36fd9a987dbb7dfce1[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:47:07 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit 6f8f85196bb9f3ba604a2ef2c8547ef318fb2d3e[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:46:59 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit 19fc8a4b084b1dbaa43f4d20e313738f8040a341[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:46:49 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit 74fe0d2adcb284ae81dc8d4d393c8b937bf4c246[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:46:36 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit eeee69649bbf4cdd3a6af311434adbfd935ccab7[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:46:20 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit fd5650e622ab660ba8f73ae7a49a842c67705572[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:46:09 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit ef463dae9523ab65adcbcf75af7de55ca3f86467[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:45:36 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit 31c1163015d102de41deb6b391e8d4f23aea066a[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:45:19 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit e3498a16152b0e86431a83cac710a466dd5c0672[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:45:09 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit 8223e8c4ecd70c13e1f784dcdcabd4a156a9551b[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:44:09 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit 32ef4b6ae7831edd5d9920704494452ffbd25f19[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:43:45 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit 44541c64379e9b616762c361598eea9174cedbf4[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Tue Oct 11 16:40:52 2022 +0900
+
+    tiago tutorial 4.2~4.3 retry
+
+[33mcommit 098adbb58fa77440b3123b3ef0c21c257ca99ab8[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 16:39:58 2022 +0900
+
+    Delete new-workspace.jupyterlab-workspace
+
+[33mcommit 079b8a62755cd9f83ede06363e6cb821dafe7405[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Tue Oct 11 16:38:54 2022 +0900
+
+    tiago tutorial 4.2~4.3
+
+[33mcommit 1d0ab753f506799d4b1a556e6b963be7d4ba12c9[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 13:59:06 2022 +0900
+
+    Delete .DS_Store
+
+[33mcommit cd68a59a4780d2cd2a3c61456fdc012505517183[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 13:58:10 2022 +0900
+
+    Delete note.jpeg
+
+[33mcommit 4ddc31c86d4c69ef48d5c3a69bfc58609a7fc7cc[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Tue Oct 11 13:57:11 2022 +0900
+
+    Delete test.txt
+
+[33mcommit e33f9de113c9a8bc09dde66b515addaa21ecb997[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Tue Oct 11 13:50:38 2022 +0900
+
+    test
+
+[33mcommit cd7b0c8e67a5fa7e22ea931ec0e871f892b7d662[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Tue Oct 4 15:32:47 2022 +0900
+
+    論理生命学最終改定
+
+[33mcommit eebf6cd505bc83530bb12b8339eba19219c04f2d[m
+Author: Shockwave <--global>
+Date:   Sat Aug 6 18:50:41 2022 +0900
+
+    error
+
+[33mcommit 77faf1ac59fe2d176b27371297e0768baa80df53[m
+Author: Meteor <--global>
+Date:   Sat Aug 6 18:17:24 2022 +0900
+
+    rein
+
+[33mcommit d6b7c9ea6f7be42d6d5c351eed7059cf7cd55411[m
+Merge: 351701b 318d0ac
+Author: Meteor <--global>
+Date:   Sat Aug 6 17:57:03 2022 +0900
+
+    diff
+
+[33mcommit 351701bb0f7c51d764043d54a78467df67ff3c1a[m
+Author: Meteor <--global>
+Date:   Wed Jul 13 17:14:06 2022 +0900
+
+    ALL
+
+[33mcommit 318d0ac988bfd72c3389c234fd7ac6ec8b6aabb5[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Mon Jul 4 18:27:19 2022 +0900
+
+    Delete Machine Learning/CNN directory
+
+[33mcommit c782d2d89d7f88e3754188473c1e4cae43532aed[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Mon Jul 4 18:26:12 2022 +0900
+
+    *
+
+[33mcommit 7cd28e20060c515572de25c1ee018a5c80d81e59[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Mon Jul 4 18:24:38 2022 +0900
+
+    HowToUseTiago
+
+[33mcommit b04963aec3ca720b878b107efa49c31b430aa0ef[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Mon Jul 4 18:23:58 2022 +0900
+
+    2-4~6
+
+[33mcommit c096534a1a8b9030b4c9f456e7d36d477e479c28[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Sat Jul 2 20:14:30 2022 +0900
+
+    PCA_last
+
+[33mcommit cf24bacb9d0447947b5cae256b1178721958e15a[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sat Jul 2 20:04:25 2022 +0900
+
+    PCA3
+
+[33mcommit 37729687014396f7e3a40d63dee232b2a34ad792[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Sat Jul 2 19:46:22 2022 +0900
+
+    PCA2
+
+[33mcommit f0aa56d9f6987f814d47a140d5d94a3052aa63ca[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sat Jul 2 18:45:16 2022 +0900
+
+    PCA
+
+[33mcommit ccddbeec55c5baee5e14a690ef435b1580dad83d[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Sat Jul 2 14:36:08 2022 +0900
+
+    Delete slide.png
+
+[33mcommit b1f4df751f728303ceb438f27e66e4560e139212[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Sat Jul 2 14:35:40 2022 +0900
+
+    Materials
+
+[33mcommit 11b486974ac8640966ab099fa95872c6d369c3e8[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Sat Jul 2 14:34:24 2022 +0900
+
+    PCA
+
+[33mcommit da372615da1332943b0be56deb50301ee3dee924[m
+Author: Shockwave6930 <106547402+Shockwave6930@users.noreply.github.com>
+Date:   Sat Jul 2 14:19:14 2022 +0900
+
+    Delete How_To_Use_R.ipynb
+
+[33mcommit 03c2532fd1d7a332e1ab52507174cb5fea567a6c[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sat Jul 2 14:07:20 2022 +0900
+
+    test
+
+[33mcommit 49000c5cdf90e6054f07594cc20286811665f0c9[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sat Jun 25 16:02:40 2022 +0900
+
+    Action
+
+[33mcommit 14f7b7fd669623bd126f659854029a1178e517aa[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Fri Jun 24 17:20:30 2022 +0900
+
+    CNN
+
+[33mcommit a7a960c5cdaea8c8cddbd40bb28909f1376aa3cd[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Sun Jun 19 02:48:18 2022 +0900
+
+    PCA
+
+[33mcommit 9ae9d6f90ff1ea22f1d13d753694a8f04a46753e[m
+Author: Flash <dan.ohashi1152@gmail.com>
+Date:   Sat Jun 18 03:48:51 2022 +0900
+
+    RR
+
+[33mcommit b6502ac056c8bded32f321fa483d19a9ffd49cc2[m
+Author: Flash <dan.ohashi1152@gmail.com>
+Date:   Sat Jun 18 03:48:13 2022 +0900
+
+    R
+
+[33mcommit 7d97e7b318fdb60a9eebf987423dc440be88d7aa[m
+Author: Meteor <dan.ohashi1152@gmail.com>
+Date:   Fri Jun 17 23:55:59 2022 +0900
+
+    20220617
+
+[33mcommit fa6b7ec01d6ef965bc9867eb2703d3b162ea4e12[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Sat Jun 11 01:35:48 2022 +0900
+
+    Course-robotpractice
+
+[33mcommit 4a3c99e0ccad36d3cfe014ca9b5410b14ab5a970[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Fri Jun 10 20:38:44 2022 +0900
+
+    JupyterLab
+
+[33mcommit 1e0ae02b8324944b3364f593aa6fda04f7367ff6[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Fri Jun 10 20:37:35 2022 +0900
+
+    FastAPI
+
+[33mcommit 696130c3ace37ac37f4e9d0e766ed368aeae15cc[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Fri Jun 10 20:36:47 2022 +0900
+
+    Statistics
+
+[33mcommit b1833581d2e3b76703fe16ce643e4367f6d97d1b[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Fri Jun 10 20:24:09 2022 +0900
+
+    HRI-Lab
+
+[33mcommit d5ada9b0fb1e749191dba40cf7783143c2bee23c[m
+Author: ShockWave <dan.ohashi1152@gmail.com>
+Date:   Fri Jun 10 20:10:47 2022 +0900
+
+    test.txt
